@@ -100,7 +100,7 @@ resource "aws_elb" "load_balancer" {
 
     listener {
         lb_port = 443
-        lp_protocol = "https"
+        lb_protocol = "https"
         instance_port = 8200
         instance_protocol = "http"
         ssl_certificate_id = "${var.ssl_certificate}"

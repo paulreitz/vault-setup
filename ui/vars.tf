@@ -9,6 +9,7 @@ variable "server_subdomain" {}
 variable "aws_key_pair_name" {}
 variable "ssl_certificate" {}
 variable "ui_tag" {}
+variable "prefix" {}
 variable "instances" {
     default = 1
 }

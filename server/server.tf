@@ -81,7 +81,7 @@ data "aws_ami" "server_ami" {
 }
 
 resource "aws_launch_configuration" "vault" {
-    image_id = "${aws_ami.server_ami.id}"
+    image_id = "${data.aws_ami.server_ami.id}"
     instance_type = "t2.micro"
     security_groups = ["${data.terraform_remote_state.security_groups.server_id}"]
     key_name = "${var.aws_key_pair_name}"

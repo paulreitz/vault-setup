@@ -109,7 +109,7 @@ resource "aws_elb" "load_balancer" {
 
 resource "aws_autoscaling_group" "group" {
     launch_configuration = "${aws_launch_configuration.vault.id}"
-    availability_zones = ["${data.availability_zones.all.names}"]
+    availability_zones = ["${data.aws_availability_zones.all.names}"]
     vpc_zone_identifier = ["${data.terraform_remote_state.vpc.private_subnet_id}"]
 
     min_size = "${var.instances}"

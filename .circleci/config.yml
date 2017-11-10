@@ -73,7 +73,7 @@ jobs:
           name: Deploy Security Groups
           command: | 
             cd securitygroups
-            terraform init -backend-config="bucket=$TF_VAR_tfstate_bucket_name" -backend-config="region-$TF_VAR_aws_region" -backend-config="key=$TF_VAR_security_groups_state_key"
+            terraform init -backend-config="bucket=$TF_VAR_tfstate_bucket_name" -backend-config="region=$TF_VAR_aws_region" -backend-config="key=$TF_VAR_security_groups_state_key"
             terraform plan
             terraform apply
   build_jumpbox:
@@ -86,7 +86,7 @@ jobs:
           name: Deploy Jumpbox
           command: | 
             cd jumpbox
-            terraform init -backend-config="bucket=$TF_VAR_tfstate_bucket_name" -backend-config="region-$TF_VAR_aws_region" -backend-config="key=$FT_VAR_jumpbox_state_key"
+            terraform init -backend-config="bucket=$TF_VAR_tfstate_bucket_name" -backend-config="region=$TF_VAR_aws_region" -backend-config="key=$TF_VAR_jumpbox_state_key"
             terraform plan
             terraform apply
   build_server:

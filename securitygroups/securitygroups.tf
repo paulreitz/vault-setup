@@ -64,7 +64,7 @@ resource "aws_security_group" "server" {
         cidr_blocks = ["10.0.0.0/16"]
     }
 
-    ingerss {
+    ingress {
         from_port = 8200
         to_port = 8201
         protocol = "tcp"

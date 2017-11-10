@@ -81,7 +81,7 @@ data "aws_ami" "server_ami" {
 }
 
 resource "aws_launch_configuration" "vault" {
-    image_id = "${aws_ami.server_ami.id}"
+    image_id = "${data.aws_ami.server_ami.id}"
     instance_type = "t2.micro"
     security_groups = ["${data.terraform_remote_state.security_groups.server_id}"]
     key_name = "${var.aws_key_pair_name}"
@@ -100,7 +100,7 @@ resource "aws_elb" "load_balancer" {
 
     listener {
         lb_port = 443
-        lp_protocol = "https"
+        lb_protocol = "https"
         instance_port = 8200
         instance_protocol = "http"
         ssl_certificate_id = "${var.ssl_certificate}"
@@ -109,7 +109,7 @@ resource "aws_elb" "load_balancer" {
 
 resource "aws_autoscaling_group" "group" {
     launch_configuration = "${aws_launch_configuration.vault.id}"
-    availability_zones = ["${data.availability_zones.all.names}"]
+    availability_zones = ["${data.aws_availability_zones.all.names}"]
     vpc_zone_identifier = ["${data.terraform_remote_state.vpc.private_subnet_id}"]
 
     min_size = "${var.instances}"

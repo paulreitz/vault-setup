@@ -1,5 +1,5 @@
 terraform {
-    backend = "s3"
+    backend "s3" {}
 }
 
 provider "aws" {
@@ -21,7 +21,7 @@ data "terraform_remote_state" "security_groups" {
     backend = "s3"
     config = {
         bucket = "${var.tfstate_bucket_name}"
-        key = "${var.vpc_state_key}"
+        key = "${var.security_groups_state_key}"
         region = "${var.aws_region}"
     }
 }
@@ -44,7 +44,7 @@ data "aws_ami" "ui_ami" {
 }
 
 resource "aws_launch_configuration" "ui" {
-    image_id = "${aws_ami.ui_ami.id}"
+    image_id = "${data.aws_ami.ui_ami.id}"
     instance_type = "t2.micro"
     security_groups = ["${data.terraform_remote_state.security_groups.ui_id}"]
     key_name = "${var.aws_key_pair_name}"
@@ -71,7 +71,7 @@ resource "aws_elb" "load_balancer" {
 
 resource "aws_autoscaling_group" "group" {
     launch_configuration = "${aws_launch_configuration.ui.id}"
-    availability_zones = ["${data.availability_zones.all.names}"]
+    availability_zones = ["${data.aws_availability_zones.all.names}"]
     vpc_zone_identifier = ["${data.terraform_remote_state.vpc.public_subnet_id}"]
 
     min_size = "${var.instances}"

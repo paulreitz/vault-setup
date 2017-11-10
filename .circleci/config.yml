@@ -121,51 +121,37 @@ workflows:
     jobs:
       - build_server_ami:
           filters:
-            tags:
-              only: /full-deploy.*/
             branches:
-              ignore: /.*/
+              only: /full-deploy/
       - build_ui_ami:
           filters:
-            tags:
-              only: /full-deploy.*/
             branches:
-              ignore: /.*/
+              only: /full-deploy/
       - build_storage:
           filters:
-            tags:
-              only: /full-deploy.*/
             branches:
-              ignore: /.*/
+              only: /full-deploy/
       - build_vpc:
           filters:
-            tags:
-              only: /full-deploy.*/
             branches:
-              ignore: /.*/
+              only: /full-deploy/
       - build_security_groups:
           filters:
-            tags:
-              only: /full-deploy.*/
             branches:
-              ignore: /.*/
+              only: /full-deploy/
           requires:
             - build_vpc
       - build_jumpbox:
           filters:
-            tags:
-              only: /full-deploy.*/
             branches:
-              ignore: /.*/
+              only: /full-deploy/
           requires:
             - build_vpc
             - build_security_groups
       - build_server:
           filters:
-            tags:
-              only: /full-deploy.*/
             branches:
-              ignore: /.*/
+              only: /full-deploy/
           requires:
             - build_vpc
             - build_security_groups
@@ -173,10 +159,8 @@ workflows:
             - build_server_ami
       - build_ui:
           filters:
-            tags:
-              only: /full-deploy.*/
             branches:
-              ignore: /.*/
+              only: /full-deploy/
           requires:
             - build_vpc
             - build_security_groups

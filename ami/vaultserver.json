@@ -26,7 +26,7 @@
             "ssh_username":"ubuntu",
             "type": "amazon-ebs",
             "tags": {
-                "Name": "{{user`server_tag`}}",
+                "Name": "{{user `server_tag`}}",
                 "Build": "{{user `build_number`}}",
                 "Branch": "{{user `branch`}}"
             }

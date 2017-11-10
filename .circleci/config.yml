@@ -57,7 +57,7 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Initialize Terraform
+          name: Deploy VPC
           command: | 
             cd vpc
             terraform init -backend-config="bucket=$TF_VAR_tfstate_bucket_name" -backend-config="region=$TF_VAR_aws_region" -backend-config="key=$TF_VAR_vpc_state_key"
@@ -70,7 +70,7 @@ jobs:
     steps:
       - checkout
       - run: 
-          name: Initialize Terraform
+          name: Deploy Security Groups
           command: | 
             cd securitygroups
             terraform init -backend-config="bucket=$TF_VAR_tfstate_bucket_name" -backend-config="region-$TF_VAR_aws_region" -backend-config="key=$TF_VAR_security_groups_state_key"
@@ -83,7 +83,7 @@ jobs:
     steps:
       - checkout
       - run: 
-          name: Initialize Terraform
+          name: Deploy Jumpbox
           command: | 
             cd jumpbox
             terraform init -backend-config="bucket=$TF_VAR_tfstate_bucket_name" -backend-config="region-$TF_VAR_aws_region" -backend-config="key=$FT_VAR_jumpbox_state_key"
@@ -96,7 +96,7 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Initialize Terraform
+          name: Deploy Server
           command: | 
             cd server
             terraform init -backend-config="bucket=$TF_VAR_tfstate_bucket_name" -backend-config="region=$TF_VAR_aws_region" -backend-config="key=$TF_VAR_server_state_key"
@@ -109,7 +109,7 @@ jobs:
     steps:
       - checkout
       - run: 
-          name: Initialize Terraform
+          name: Deploy UI
           command: | 
             cd ui
             terraform init -backend-config="bucket=$TF_VAR_tfstate_bucket_name" -backend-config="region=$TF_VAR_aws_region" -backend-config="key=$TF_VAR_ui_state_key"

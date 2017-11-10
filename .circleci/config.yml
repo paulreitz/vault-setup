@@ -1,0 +1,259 @@
+version: 2
+jobs:
+  validate_terraform:
+    docker: 
+      - image: wata727/tflint
+    working_directory: ~/vault-setup
+    steps:
+      - checkout
+      - run: 
+          name: Verify Terraform Files
+          command: | 
+            tflint jumpbox/*
+            tflint securitygroups/*
+            tflint server/*
+            tflint storage/*
+            tflint ui/*
+            tflint vpc/*
+  build_server_ami:
+    docker:
+      - image: hashicorp/packer:1.0.4
+    working_directory: ~/vault-setup
+    steps:
+      - checkout
+      - run: 
+          name: Build Vault Server AMI
+          command: | 
+            cd ami
+            packer build vaultserver.json
+  build_ui_ami:
+    docker:
+      - image: hashicorp/packer:1.0.4
+    working_directory: ~/vault-setup
+    steps:
+      - checkout
+      - run:
+          name: Build UI Server AMI
+          command: | 
+            cd ami
+            packer build uiserver.json
+  build_storage:
+    docker:
+      - image: hashicorp/terraform:0.10.2
+    working_directory: ~/vault-setup
+    steps: 
+      - checkout
+      - run:
+          name: Initialize Terraform
+          command: | 
+            cd storage
+            terraform init -backend-config="bucket=$TF_VAR_tfstate_bucket_name" -backend-config="region=$TF_VAR_aws_region" -backend-config="key=$TF_VAR_storage_state_key"
+      - run:
+          name: Validate Terraform Scripts
+          command: terraform plan
+      - run: 
+          name: Deploy Storage
+          command: terraform apply
+  build_vpc:
+    docker:
+      - image: hashicorp/terraform:0.10.2
+    working_directory: ~/vault-setup
+    steps:
+      - checkout
+      - run:
+          name: Initialize Terraform
+          command: | 
+            cd vpc
+            terraform init -backend-config="bucket=$TF_VAR_tfstate_bucket_name" -backend-config="region=$TF_VAR_aws_region" -backend-config="key=$TF_VAR_vpc_state_key"
+      - run:
+          name: Validate Terraform Scripts
+          command: terraform plan
+      - run: 
+          name: Deploy VPC
+          command: terraform apply
+  build_security_groups:
+    docker:
+      - image: hashicorp/terraform:0.10.2
+    working_directory: ~/vault-setup
+    steps:
+      - checkout
+      - run: 
+          name: Initialize Terraform
+          command: | 
+            cd securitygroups
+            terraform init -backend-config="bucket=$TF_VAR_tfstate_bucket_name" -backend-config="region-$TF_VAR_aws_region" -backend-config="key=$TF_VAR_security_groups_state_key"
+      - run:
+          name: Validate Terraform Scripts
+          command: terraform plan
+      - run:
+          name: Build Security Groups
+          command: terraform apply
+  build_jumpbox:
+    docker:
+      - image: hashicorp/terraform:0.10.2
+    working_directory: ~/vault-setup
+    steps:
+      - checkout
+      - run: 
+          name: Initialize Terraform
+          command: | 
+            cd jumpbox
+            terraform init -backend-config="bucket=$TF_VAR_tfstate_bucket_name" -backend-config="region-$TF_VAR_aws_region" -backend-config="key=$FT_VAR_jumpbox_state_key"
+      - run: 
+          name: Validate Terraform Scripts
+          command: terraform plan
+      - run: 
+          name: Deploy Jumpbox
+          command: terraform apply
+  build_server:
+    docker:
+      - image: hashicorp/terraform:0.10.2
+    working_directory: ~/vault-setup
+    steps:
+      - checkout
+      - run:
+          name: Initialize Terraform
+          command: | 
+            cd server
+            terraform init -backend-config="bucket=$TF_VAR_tfstate_bucket_name" -backend-config="region=$TF_VAR_aws_region" -backend-config="key=$TF_VAR_server_state_key"
+      - run:
+          name: Validate Terraform Scripts
+          command: terraform plan
+      - run: 
+          name: Deploy Vault Server
+          command: terraform apply
+  build_ui:
+    docker:
+      - image: hashicorp/terraform:0.10.2
+    working_directory: ~/vault-setup
+    steps:
+      - checkout
+      - run: 
+          name: Initialize Terraform
+          command: | 
+            cd ui
+            terraform init -backend-config="bucket=$TF_VAR_tfstate_bucket_name" -backend-config="region=$TF_VAR_aws_region" -backend-config="key=$TF_VAR_ui_state_key"
+      - run: 
+          name: Validate Terraform Scripts
+          command: terraform plan
+      - run: 
+          name: Deploy Vault UI
+          command: terraform apply
+workflows:
+  version: 2
+  full-deployment:
+    jobs:
+      - build_server_ami:
+          filters:
+            tags:
+              only: /full-deploy.*/
+            branches:
+              ignore: /.*/
+      - build_ui_ami:
+          filters:
+            tags:
+              only: /full-deploy.*/
+            branches:
+              ignore: /.*/
+      - build_storage:
+          filters:
+            tags:
+              only: /full-deploy.*/
+            branches:
+              ignore: /.*/
+      - build_vpc:
+          filters:
+            tags:
+              only: /full-deploy.*/
+            branches:
+              ignore: /.*/
+      - build_security_groups:
+          filters:
+            tags:
+              only: /full-deploy.*/
+            branches:
+              ignore: /.*/
+          requires:
+            - build_vpc
+      - build_jumpbox:
+          filters:
+            tags:
+              only: /full-deploy.*/
+            branches:
+              ignore: /.*/
+          requires:
+            - build_vpc
+            - build_security_groups
+      - build_server:
+          filters:
+            tags:
+              only: /full-deploy.*/
+            branches:
+              ignore: /.*/
+          requires:
+            - build_vpc
+            - build_security_groups
+            - build_storage
+            - build_server_ami
+      - build_ui:
+          filters:
+            tags:
+              only: /full-deploy.*/
+            branches:
+              ignore: /.*/
+          requires:
+            - build_vpc
+            - build_security_groups
+            - build_ui_ami
+  promotional_build:
+    jobs:
+      - build_server_ami:
+          filters:
+            tags:
+              only: /promo-deploy.*/
+            branches:
+              ignore: /.*/
+      - build_ui_ami:
+          filters:
+            tags:
+              only: /promo-deploy.*/
+            branches:
+              ignore: /.*/
+      - build_storage:
+          filters:
+            tags:
+              only: /promo-deploy.*/
+            branches:
+              ignore: /.*/
+      - build_security_groups:
+          filters:
+            tags:
+              only: /promo-deploy.*/
+            branches:
+              ignore: /.*/
+      - build_server:
+          filters:
+            tags:
+              only: /promo-deploy.*/
+            branches:
+              ignore: /.*/
+          requires:
+            - build_security_groups
+            - build_storage
+            - build_server_ami
+      - build_ui:
+          filters:
+            tags:
+              only: /promo-deploy.*/
+            branches:
+              ignore: /.*/
+          requires:
+            - build_security_groups
+            - build_ui_ami
+  validate_terraform:
+    jobs:
+      - validate_terraform:
+          filters:
+            branches:
+              only: /.*/
+

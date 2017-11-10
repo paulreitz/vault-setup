@@ -133,6 +133,12 @@ jobs:
           command: | 
             cd ui
             terraform init -backend-config="bucket=$TF_VAR_tfstate_bucket_name" -backend-config="region=$TF_VAR_aws_region" -backend-config="key=$TF_VAR_ui_state_key"
+      - run: 
+          name: Validate Terraform Scripts
+          command: terraform plan
+      - run: 
+          name: Deploy Vault UI
+          command: terraform apply
 workflows:
   version: 2
   full-deployment:

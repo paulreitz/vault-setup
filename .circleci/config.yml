@@ -147,28 +147,40 @@ workflows:
           filters:
             tags:
               only: /full-deploy.*/
+            branches:
+              ignore: /.*/
       - build_ui_ami:
           filters:
             tags:
               only: /full-deploy.*/
+            branches:
+              ignore: /.*/
       - build_storage:
           filters:
             tags:
               only: /full-deploy.*/
+            branches:
+              ignore: /.*/
       - build_vpc:
           filters:
             tags:
               only: /full-deploy.*/
+            branches:
+              ignore: /.*/
       - build_security_groups:
           filters:
             tags:
               only: /full-deploy.*/
+            branches:
+              ignore: /.*/
           requires:
             - build_vpc
       - build_jumpbox:
           filters:
             tags:
               only: /full-deploy.*/
+            branches:
+              ignore: /.*/
           requires:
             - build_vpc
             - build_security_groups
@@ -176,6 +188,8 @@ workflows:
           filters:
             tags:
               only: /full-deploy.*/
+            branches:
+              ignore: /.*/
           requires:
             - build_vpc
             - build_security_groups
@@ -185,6 +199,8 @@ workflows:
           filters:
             tags:
               only: /full-deploy.*/
+            branches:
+              ignore: /.*/
           requires:
             - build_vpc
             - build_security_groups
@@ -195,22 +211,32 @@ workflows:
           filters:
             tags:
               only: /promo-deploy.*/
+            branches:
+              ignore: /.*/
       - build_ui_ami:
           filters:
             tags:
               only: /promo-deploy.*/
+            branches:
+              ignore: /.*/
       - build_storage:
           filters:
             tags:
               only: /promo-deploy.*/
+            branches:
+              ignore: /.*/
       - build_security_groups:
           filters:
             tags:
               only: /promo-deploy.*/
+            branches:
+              ignore: /.*/
       - build_server:
           filters:
             tags:
               only: /promo-deploy.*/
+            branches:
+              ignore: /.*/
           requires:
             - build_security_groups
             - build_storage
@@ -219,6 +245,8 @@ workflows:
           filters:
             tags:
               only: /promo-deploy.*/
+            branches:
+              ignore: /.*/
           requires:
             - build_security_groups
             - build_ui_ami

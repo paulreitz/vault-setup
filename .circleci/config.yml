@@ -36,7 +36,7 @@ jobs:
           name: Build UI Server AMI
           command: | 
             cd ami
-            packer build uiserver.json
+            packer build vaultui.json
   build_storage:
     docker:
       - image: hashicorp/terraform:0.10.2
@@ -44,16 +44,12 @@ jobs:
     steps: 
       - checkout
       - run:
-          name: Initialize Terraform
+          name: Deploy Storage
           command: | 
             cd storage
             terraform init -backend-config="bucket=$TF_VAR_tfstate_bucket_name" -backend-config="region=$TF_VAR_aws_region" -backend-config="key=$TF_VAR_storage_state_key"
-      - run:
-          name: Validate Terraform Scripts
-          command: terraform plan
-      - run: 
-          name: Deploy Storage
-          command: terraform apply
+            terraform plan
+            terraform apply
   build_vpc:
     docker:
       - image: hashicorp/terraform:0.10.2
@@ -65,12 +61,8 @@ jobs:
           command: | 
             cd vpc
             terraform init -backend-config="bucket=$TF_VAR_tfstate_bucket_name" -backend-config="region=$TF_VAR_aws_region" -backend-config="key=$TF_VAR_vpc_state_key"
-      - run:
-          name: Validate Terraform Scripts
-          command: terraform plan
-      - run: 
-          name: Deploy VPC
-          command: terraform apply
+            terraform plan
+            terraform apply
   build_security_groups:
     docker:
       - image: hashicorp/terraform:0.10.2
@@ -82,12 +74,8 @@ jobs:
           command: | 
             cd securitygroups
             terraform init -backend-config="bucket=$TF_VAR_tfstate_bucket_name" -backend-config="region-$TF_VAR_aws_region" -backend-config="key=$TF_VAR_security_groups_state_key"
-      - run:
-          name: Validate Terraform Scripts
-          command: terraform plan
-      - run:
-          name: Build Security Groups
-          command: terraform apply
+            terraform plan
+            terraform apply
   build_jumpbox:
     docker:
       - image: hashicorp/terraform:0.10.2
@@ -99,12 +87,8 @@ jobs:
           command: | 
             cd jumpbox
             terraform init -backend-config="bucket=$TF_VAR_tfstate_bucket_name" -backend-config="region-$TF_VAR_aws_region" -backend-config="key=$FT_VAR_jumpbox_state_key"
-      - run: 
-          name: Validate Terraform Scripts
-          command: terraform plan
-      - run: 
-          name: Deploy Jumpbox
-          command: terraform apply
+            terraform plan
+            terraform apply
   build_server:
     docker:
       - image: hashicorp/terraform:0.10.2
@@ -116,12 +100,8 @@ jobs:
           command: | 
             cd server
             terraform init -backend-config="bucket=$TF_VAR_tfstate_bucket_name" -backend-config="region=$TF_VAR_aws_region" -backend-config="key=$TF_VAR_server_state_key"
-      - run:
-          name: Validate Terraform Scripts
-          command: terraform plan
-      - run: 
-          name: Deploy Vault Server
-          command: terraform apply
+            terraform plan
+            terraform apply
   build_ui:
     docker:
       - image: hashicorp/terraform:0.10.2
@@ -133,12 +113,8 @@ jobs:
           command: | 
             cd ui
             terraform init -backend-config="bucket=$TF_VAR_tfstate_bucket_name" -backend-config="region=$TF_VAR_aws_region" -backend-config="key=$TF_VAR_ui_state_key"
-      - run: 
-          name: Validate Terraform Scripts
-          command: terraform plan
-      - run: 
-          name: Deploy Vault UI
-          command: terraform apply
+            terraform plan
+            terraform apply
 workflows:
   version: 2
   full-deployment:

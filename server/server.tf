@@ -53,7 +53,10 @@ resource "aws_iam_user_policy" "test_policy" {
         {
             "Action": "s3:*",
             "Effect": "Allow",
-            "Resource": "${data.terraform_remote_state.storage.vault_bucket_arn}"
+            "Resource": [
+                "${data.terraform_remote_state.storage.vault_bucket_arn}",
+                "${data.terraform_remote_state.storage.vault_bucket_arn}/*"
+            ]
         }
     ]
 }

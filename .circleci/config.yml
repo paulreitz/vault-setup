@@ -122,11 +122,11 @@ workflows:
       - build_server_ami:
           filters:
             branches:
-              only: /full-deploy-ami/
+              only: /full-deploy/
       - build_ui_ami:
           filters:
             branches:
-              only: /full-deploy-ami/
+              only: /full-deploy/
       - build_storage:
           filters:
             branches:

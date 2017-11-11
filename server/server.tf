@@ -43,6 +43,8 @@ resource "aws_iam_access_key" "vault_user" {
     user = "${aws_iam_user.vault_user.name}"
 }
 
+# DO NOT REFORMAT THIS RESOURCE
+# The policy JSON can not have any leading spaces, or the build will fail
 resource "aws_iam_user_policy" "test_policy" {
     name = "test-policy"
     user = "${aws_iam_user.vault_user.name}"

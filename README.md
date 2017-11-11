@@ -8,7 +8,7 @@ Vault is an open source secrets management tool developed by Hashicorp. You can 
 ## Acknowledgements
 There were a couple of valuable resources I used while working on this project:  
 * [Hashicorp](https://www.hashicorp.com/) provided a [quickstart template](https://aws.amazon.com/quickstart/architecture/vault/) that provided a good starting point for this project.
-* The front end uses [Vault-UI](https://github.com/djenriquez/vault-ui) by DJ Enrequez.
+* The front end uses [Vault-UI](https://github.com/djenriquez/vault-ui) by DJ Enriquez.
 
 ## Prerequisites
 There are a few things you'll to setup a vault server for yourself.

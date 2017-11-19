@@ -5,7 +5,7 @@ variable "aws_region" {}
 variable "dns_zone_id" {}
 variable "root_domain" {}
 variable "ui_subdomain" {}
-variable "server_subdomain" {}
+variable "sub_domain" {}
 variable "aws_key_pair_name" {}
 variable "ssl_certificate" {}
 variable "ui_tag" {}

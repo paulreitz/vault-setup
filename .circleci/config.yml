@@ -115,6 +115,19 @@ jobs:
             terraform init -backend-config="bucket=$TF_VAR_tfstate_bucket_name" -backend-config="region=$TF_VAR_aws_region" -backend-config="key=$TF_VAR_ui_state_key"
             terraform plan
             terraform apply
+  build_load_balancer:
+    docker:
+      - image: hashicorp/terraform:0.10.2
+    working_directory: ~/vault-setup
+    steps:
+      - checkout
+      - run: 
+          name: Deploy UI
+          command: | 
+            cd ui
+            terraform init -backend-config="bucket=$TF_VAR_tfstate_bucket_name" -backend-config="region=$TF_VAR_aws_region" -backend-config="key=$TF_VAR_alb_state_key"
+            terraform plan
+            terraform apply
 workflows:
   version: 2
   full-deployment:
@@ -165,51 +178,15 @@ workflows:
             - build_vpc
             - build_security_groups
             - build_ui_ami
-  promotional_build:
-    jobs:
-      - build_server_ami:
+      - build_load_balancer:
           filters:
-            tags:
-              only: /promo-deploy.*/
             branches:
-              ignore: /.*/
-      - build_ui_ami:
-          filters:
-            tags:
-              only: /promo-deploy.*/
-            branches:
-              ignore: /.*/
-      - build_storage:
-          filters:
-            tags:
-              only: /promo-deploy.*/
-            branches:
-              ignore: /.*/
-      - build_security_groups:
-          filters:
-            tags:
-              only: /promo-deploy.*/
-            branches:
-              ignore: /.*/
-      - build_server:
-          filters:
-            tags:
-              only: /promo-deploy.*/
-            branches:
-              ignore: /.*/
-          requires:
-            - build_security_groups
-            - build_storage
-            - build_server_ami
-      - build_ui:
-          filters:
-            tags:
-              only: /promo-deploy.*/
-            branches:
-              ignore: /.*/
-          requires:
-            - build_security_groups
-            - build_ui_ami
+              only: /full-deploy/
+            requires:
+              - build_vpc
+              - build_security_groups
+              - build_server
+              - build_ui
   validate_terraform:
     jobs:
       - validate_terraform:

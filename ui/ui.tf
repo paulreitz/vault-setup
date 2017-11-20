@@ -30,7 +30,7 @@ data "template_file" "user_data" {
     template = "${file("userdata.sh")}"
 
     vars {
-        vault_endpoint = "https://${var.server_subdomain}.${var.root_domain}"
+        vault_endpoint = "https://${var.sub_domain}.${var.root_domain}"
     }
 }
 
@@ -55,20 +55,6 @@ resource "aws_launch_configuration" "ui" {
     }
 }
 
-resource "aws_elb" "load_balancer" {
-    name = "${var.prefix}-ui-load-balancer"
-    subnets = ["${data.terraform_remote_state.vpc.public_subnet_id}"]
-    security_groups = ["${data.terraform_remote_state.security_groups.load_balancer_id}"]
-
-    listener {
-        lb_port = 443
-        lb_protocol = "https"
-        instance_port = 80
-        instance_protocol = "http"
-        ssl_certificate_id = "${var.ssl_certificate}"
-    }
-}
-
 resource "aws_autoscaling_group" "group" {
     launch_configuration = "${aws_launch_configuration.ui.id}"
     availability_zones = ["${data.aws_availability_zones.all.names}"]
@@ -84,15 +70,14 @@ resource "aws_autoscaling_group" "group" {
     }
 }
 
-resource "aws_autoscaling_attachment" "attachment" {
-    autoscaling_group_name = "${aws_autoscaling_group.group.id}"
-    elb = "${aws_elb.load_balancer.id}"
+resource "aws_alb_target_group" "ui" {
+    name = "${var.prefix}-ui"
+    port = 80
+    protocol = "HTTP"
+    vpc_id = "${data.terraform_remote_state.vpc.vpc_id}"
 }
 
-resource "aws_route53_record" "subdomain" {
-    zone_id = "${var.dns_zone_id}"
-    name = "${var.ui_subdomain}.${var.root_domain}"
-    type = "CNAME"
-    ttl = "300"
-    records = ["${aws_elb.load_balancer.dns_name}"]
+resource "aws_autoscaling_attachment" "group" {
+    autoscaling_group_name = "${aws_autoscaling_group.group.id}"
+    alb_target_group_arn = "${aws_alb_target_group.ui.arn}"
 }

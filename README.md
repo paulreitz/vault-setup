@@ -42,14 +42,13 @@ There are quite a few environment variables that will need to be set. This will 
 NOTE: for the environment variables that end with `_state_key` you can use the value I provide, unless you understand terraform state.
 ### Environment Variables
 **TF_VAR_aws_region**: The region where you want the server deployed (example: `us-west-1`)   
-**TF_VAR_availability_zone**: A single availability zone in the region. This is where the subnets will be deployed. (example: `us-west-1a`)  
+**TF_VAR_availability_zone_1**: A single availability zone in the region. This is where the subnets will be deployed. (example: `us-west-1a`)  
+**TF_VAR_availability_zone_2** A second availability zone in case of multiple instances
 **TF_VAR_prefix**: A unique prefixed used for a number of resources. This is for quickly identifying the resources used for vault, if you have several other projects in the same region  
 **TF_VAR_aws_key_pair_name**: The name of the key pair you created in the prerequesits above.  
 **TF_VAR_dns_zone_id**: The id of the DNS hosted zone you plan to use. (Services > Route 53 > Hosted Zones) The ID will be on the far right.  
 **TF_VAR_root_domain**: The root domain associated with the hosted zone. (example: `mydomain.com`)  
-**TF_VAR_server_subdomain**: The subdomain of the API endpoint for the vault server. If, for example, you want the vault API to be at `api.mydomain.com` you would only enter `api` here.  
-**TF_VAR_ui_subdomain**: The subdomain you want to use for the front end. If, for example, you want the front end to be at `ui.mydomain.com` you would only enter `ui` here.  
-**TF_VAR_ssl_certificate**: The ARN of the wildcard SSL cert for the domain. (Services > Security, Identity & Compliance > Certificate Manager). Select the certificate and copy the entire ARN from the `Details` section  
+**TF_VAR_sub_domain**: The subdomain for the vault server. If, for example, you want the vault API to be at `vault.mydomain.com` you would only enter `api` here.    
 **TF_VAR_vault_bucket**: A name for the storage the vault server will use. This will primarily be used internally and needs to be unique across all of AWS, so use something random. (example: `vault-6750306882b3`)   
 **TF_VAR_server_tag**: A tag for the server image. (example: `vault-server-ami`)  
 **TF_VAR_ui_tag**: A tag for the UI image. (example: `vault-ui-ami`)  
@@ -60,6 +59,7 @@ NOTE: for the environment variables that end with `_state_key` you can use the v
 **TF_VAR_storage_state_key**: `vault/storage/terraform.state`  
 **TF_VAR_ui_state_key**: `vault/ui/terraform.state`  
 **TF_VAR_vpc_state_key**: `vault/vpc/terraform.state`  
+**TF_VAR_alb_state_key**: `vault/alb/terraform.state`
 
 # Starting the Build
 * In the `vault-setup` repository on github, create a new branch called `full-deploy`. This will automatically start a build.  

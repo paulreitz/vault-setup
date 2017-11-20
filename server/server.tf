@@ -98,24 +98,10 @@ resource "aws_launch_configuration" "vault" {
     }
 }
 
-resource "aws_elb" "load_balancer" {
-    name = "${var.prefix}-load-balancer"
-    subnets = ["${data.terraform_remote_state.vpc.public_subnet_id}"]
-    security_groups = ["${data.terraform_remote_state.security_groups.load_balancer_id}"]
-
-    listener {
-        lb_port = 443
-        lb_protocol = "https"
-        instance_port = 8200
-        instance_protocol = "http"
-        ssl_certificate_id = "${var.ssl_certificate}"
-    }
-}
-
 resource "aws_autoscaling_group" "group" {
     launch_configuration = "${aws_launch_configuration.vault.id}"
     availability_zones = ["${data.aws_availability_zones.all.names}"]
-    vpc_zone_identifier = ["${data.terraform_remote_state.vpc.private_subnet_id}"]
+    vpc_zone_identifier = ["${data.terraform_remote_state.vpc.private_subnet_1_id}"]
 
     min_size = "${var.instances}"
     max_size = "${var.instances}"
@@ -127,15 +113,14 @@ resource "aws_autoscaling_group" "group" {
     }
 }
 
-resource "aws_autoscaling_attachment" "attachment" {
-    autoscaling_group_name = "${aws_autoscaling_group.group.id}"
-    elb = "${aws_elb.load_balancer.id}"
+resource "aws_alb_target_group" "server" {
+    name = "${var.prefix}-server"
+    port = 8200
+    protocol = "HTTP"
+    vpc_id = "${data.terraform_remote_state.vpc.vpc_id}"
 }
 
-resource "aws_route53_record" "subdomain" {
-    zone_id = "${var.dns_zone_id}"
-    name = "${var.server_subdomain}.${var.root_domain}"
-    type = "CNAME"
-    ttl = "300"
-    records = ["${aws_elb.load_balancer.dns_name}"]
+resource "aws_autoscaling_attachment" "group" {
+    autoscaling_group_name = "${aws_autoscaling_group.group.id}"
+    alb_target_group_arn = "${aws_alb_target_group.server.arn}"
 }

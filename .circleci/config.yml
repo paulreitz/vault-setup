@@ -122,9 +122,9 @@ jobs:
     steps:
       - checkout
       - run: 
-          name: Deploy UI
+          name: Deploy Application Load Balancer
           command: | 
-            cd ui
+            cd alb
             terraform init -backend-config="bucket=$TF_VAR_tfstate_bucket_name" -backend-config="region=$TF_VAR_aws_region" -backend-config="key=$TF_VAR_alb_state_key"
             terraform plan
             terraform apply

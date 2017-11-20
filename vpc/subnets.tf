@@ -8,12 +8,21 @@ resource "aws_subnet" "public" {
     }
 }
 
-resource "aws_subnet" "private" {
+resource "aws_subnet" "private_1" {
     vpc_id = "${aws_vpc.vpc.id}"
     cidr_block = "10.0.1.0/24"
-    availability_zone = "${var.availability_zone}"
+    availability_zone = "${var.availability_zone_1}"
     tags {
-        Name = "${var.prefix}-private-subnet"
+        Name = "${var.prefix}-private-subnet-1"
+    }
+}
+
+resource "aws_subnet" "private_2" {
+    vpc_id = "${aws_vpc.vpc.id}"
+    cidr_block = "10.0.1.0/24"
+    availability_zone = "${var.availability_zone_2}"
+    tags {
+        Name = "${var.prefix}-private-subnet-2"
     }
 }
 

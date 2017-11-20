@@ -71,7 +71,7 @@ resource "aws_autoscaling_group" "group" {
 }
 
 resource "aws_alb_target_group" "ui" {
-    name = "${var.prefix}"
+    name = "${var.prefix}-ui"
     port = 80
     protocol = "HTTP"
     vpc_id = "${data.terraform_remote_state.vpc.vpc_id}"

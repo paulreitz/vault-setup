@@ -101,7 +101,7 @@ resource "aws_launch_configuration" "vault" {
 resource "aws_autoscaling_group" "group" {
     launch_configuration = "${aws_launch_configuration.vault.id}"
     availability_zones = ["${data.aws_availability_zones.all.names}"]
-    vpc_zone_identifier = ["${data.terraform_remote_state.vpc.private_subnet_1_id}"]
+    vpc_zone_identifier = ["${data.terraform_remote_state.vpc.private_subnet_2_id}"]
 
     min_size = "${var.instances}"
     max_size = "${var.instances}"

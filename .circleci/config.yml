@@ -182,11 +182,11 @@ workflows:
           filters:
             branches:
               only: /full-deploy/
-            requires:
-              - build_vpc
-              - build_security_groups
-              - build_server
-              - build_ui
+          requires:
+            - build_vpc
+            - build_security_groups
+            - build_server
+            - build_ui
   validate_terraform:
     jobs:
       - validate_terraform:

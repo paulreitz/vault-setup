@@ -8,5 +8,5 @@ variable "prefix" {}
 variable "vault_name" {}
 variable "aws_key_pair_name" {}
 variable "instances" {
-    default = 1
+    default = 2
 }

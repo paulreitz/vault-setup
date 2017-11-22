@@ -51,6 +51,7 @@ resource "aws_alb" "vault_load_balancer" {
     name = "${var.prefix}-load-balancer"
     subnets = [
         "${data.terraform_remote_state.vpc.public_subnet_id}",
+        "${data.terraform_remote_state.vpc.private_subnet_1_id}",
         "${data.terraform_remote_state.vpc.private_subnet_2_id}"
     ]
     security_groups = ["${data.terraform_remote_state.security_groups.load_balancer_id}"]

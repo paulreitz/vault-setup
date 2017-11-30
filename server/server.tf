@@ -43,6 +43,12 @@ resource "aws_iam_access_key" "vault_user" {
     user = "${aws_iam_user.vault_user.name}"
 }
 
+resource "aws_iam_policy_attachment" "dynamodb_policy" {
+    name = "dynamodb-policy-attachment"
+    users = ["${aws_iam_user.vault_user.name}"]
+    policy_arn = "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
+}
+
 # DO NOT REFORMAT THIS RESOURCE
 # The policy JSON can not have any leading spaces, or the build will fail
 resource "aws_iam_user_policy" "test_policy" {
@@ -73,8 +79,22 @@ data "template_file" "user_data" {
         aws_secret_key = "${aws_iam_access_key.vault_user.secret}"
         bucket_name = "${data.terraform_remote_state.storage.vault_bucket_name}"
         bucket_region = "${var.aws_region}"
+        table_name = "${var.prefix}-ha-table"
+        api_address = "https://${var.sub_domain}.${var.root_domain}"
     }
 }
+
+# data "template_file" "user_data" {
+#     template = "${file("userdata.sh")}"
+
+#     vars {
+#         aws_access_key = "${aws_iam_access_key.vault_user.id}"
+#         aws_secret_key = "${aws_iam_access_key.vault_user.secret}"
+#         table_name = "${var.prefix}-server-table"
+#         bucket_region = "${var.aws_region}"
+#         api_address = "https://${var.sub_domain}.${var.root_domain}"
+#     }
+# }
 
 data "aws_ami" "server_ami" {
     most_recent = true

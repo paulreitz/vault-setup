@@ -7,6 +7,8 @@ variable "server_tag" {}
 variable "prefix" {}
 variable "vault_name" {}
 variable "aws_key_pair_name" {}
+variable "sub_domain" {}
+variable "root_domain" {}
 variable "instances" {
-    default = 2
+    default = 1
 }

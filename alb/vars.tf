@@ -5,6 +5,7 @@ variable "server_state_key" {}
 variable "aws_region" {}
 variable "availability_zone_1" {}
 variable "availability_zone_2" {}
+variable "availability_zone_3" {}
 variable "tfstate_bucket_name" {}
 variable "prefix" {}
 variable "dns_zone_id" {}

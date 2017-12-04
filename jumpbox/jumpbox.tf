@@ -65,7 +65,7 @@ resource "aws_eip_association" "eip" {
 resource "aws_route53_record" "jumpbox" {
     zone_id = "${var.dns_zone_id}"
     name = "${var.jumpbox_subdomain}.${var.root_domain}"
-    type = "CNAME"
+    type = "A"
     ttl = "300"
     records = ["${aws_instance.jumpbox.public_ip}"]
 }

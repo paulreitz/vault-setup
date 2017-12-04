@@ -65,7 +65,7 @@ resource "aws_autoscaling_group" "group" {
 
     tag {
         key = "Name" 
-        value = "vault-ui-private-server"
+        value = "${var.prefix}-ui-private-server"
         propagate_at_launch = true
     }
 }

@@ -7,5 +7,5 @@ variable "prefix" {}
 variable "dns_zone_id" {}
 variable "root_domain" {}
 variable "jumpbox_subdomain" {
-    default = "jump"
+    default = "jump2"
 }

@@ -52,7 +52,7 @@ resource "aws_iam_policy_attachment" "dynamodb_policy" {
 # DO NOT REFORMAT THIS RESOURCE
 # The policy JSON can not have any leading spaces, or the build will fail
 resource "aws_iam_user_policy" "test_policy" {
-    name = "test-policy"
+    name = "${var.prefix}-s3-policy"
     user = "${aws_iam_user.vault_user.name}"
     policy = <<EOF
 {
@@ -131,7 +131,7 @@ resource "aws_autoscaling_group" "group" {
 
     tag {
         key = "Name"
-        value = "vault-private-server"
+        value = "${var.prefix}-private-server"
         propagate_at_launch = true
     }
 }

@@ -84,18 +84,6 @@ data "template_file" "user_data" {
     }
 }
 
-# data "template_file" "user_data" {
-#     template = "${file("userdata.sh")}"
-
-#     vars {
-#         aws_access_key = "${aws_iam_access_key.vault_user.id}"
-#         aws_secret_key = "${aws_iam_access_key.vault_user.secret}"
-#         table_name = "${var.prefix}-server-table"
-#         bucket_region = "${var.aws_region}"
-#         api_address = "https://${var.sub_domain}.${var.root_domain}"
-#     }
-# }
-
 data "aws_ami" "server_ami" {
     most_recent = true
     owners = ["self"]

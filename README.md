@@ -87,7 +87,6 @@ ssh ubuntu@<private server ip>
 * Again, enter `yes` if you're asked to add the IP address.
 * Enter the following into the terminal:
 ```
-export VAULT_ADDR='http://localhost:8200'
 vault init
 ```
 The terminal will display 5 keys and a root token  

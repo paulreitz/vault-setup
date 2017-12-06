@@ -1,7 +1,7 @@
 #!/bin/bash
 
-cd ~
-echo 'VAULT_ADDR="http://localhost:8200"' >> .profile
+cd /home/ubuntu
+echo "export VAULT_ADDR='http://localhost:8200'" >> .profile
 
 sudo touch /etc/vault/vault-config.hcl
 sudo cat >/etc/vault/vault-config.hcl <<EOL
@@ -26,22 +26,6 @@ ha_storage "dynamodb" {
     advertise_addr = "${api_address}"
 }
 EOL
-
-# sudo cat >/etc/vault/vault-config.hcl <<EOL
-# listener "tcp" {
-#     address = "0.0.0.0:8200"
-#     tls_disable = 1
-# }
-
-# storage "dynamodb" {
-#     access_key = "${aws_access_key}"
-#     secret_key = "${aws_secret_key}"
-#     table = "{table_name}"
-#     advertise_addr = "{api_address}"
-#     ha_enabled = "true"
-#     region = "${bucket_region}"
-# }
-# EOL
 
 sudo touch /etc/systemd/system/vault.service
 sudo cat >/etc/systemd/system/vault.service <<EOL
